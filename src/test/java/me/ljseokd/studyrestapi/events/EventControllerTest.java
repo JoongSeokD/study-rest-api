@@ -13,11 +13,18 @@ import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.headers.HeaderDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
+import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -61,15 +68,59 @@ public class EventControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
-                .andExpect(header().exists(HttpHeaders.LOCATION))
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE,MediaTypes.HAL_JSON_VALUE))
+                .andExpect(header().exists(LOCATION))
+                .andExpect(header().string(CONTENT_TYPE,MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("free").value(false))
                 .andExpect(jsonPath("offline").value(true))
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()))
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.query-events").exists())
                 .andExpect(jsonPath("_links.update-event").exists())
-                .andDo(document("create-event"));
+                .andDo(document("create-event",
+                            links(
+                                    linkWithRel("self").description("link to self"),
+                                    linkWithRel("query-events").description("link to query events"),
+                                    linkWithRel("update-event").description("link to update and existing events")
+                            ),
+                        HeaderDocumentation.requestHeaders(
+                                headerWithName(ACCEPT).description("accept header"),
+                                headerWithName(CONTENT_TYPE).description("content type header")
+                        ),
+                        requestFields(
+                                fieldWithPath("name").description("Name of new Event"),
+                                fieldWithPath("description").description("Description of new Event"),
+                                fieldWithPath("beginEnrollmentDateTime").description("date time to begin of new Event"),
+                                fieldWithPath("closeEnrollmentDateTime").description("date time to close of new Event"),
+                                fieldWithPath("beginEventDateTime").description("date time to begin of new Event"),
+                                fieldWithPath("endEventDateTime").description("date time to end of new Event"),
+                                fieldWithPath("location").description("location of new Event"),
+                                fieldWithPath("basePrice").description("base price of new Event"),
+                                fieldWithPath("maxPrice").description("max price of new Event"),
+                                fieldWithPath("limitOfEnrollment").description("limit of enrollment of new Event")
+                        ),
+                        responseHeaders(
+                                headerWithName(LOCATION).description("Location header"),
+                                headerWithName(CONTENT_TYPE).description("content-type")
+                        ),
+                        relaxedResponseFields(
+                                fieldWithPath("id").description("identifier of new Event"),
+                                fieldWithPath("name").description("Name of new Event"),
+                                fieldWithPath("description").description("Description of new Event"),
+                                fieldWithPath("beginEnrollmentDateTime").description("date time to begin of new Event"),
+                                fieldWithPath("closeEnrollmentDateTime").description("date time to close of new Event"),
+                                fieldWithPath("beginEventDateTime").description("date time to begin of new Event"),
+                                fieldWithPath("endEventDateTime").description("date time to end of new Event"),
+                                fieldWithPath("location").description("location of new Event"),
+                                fieldWithPath("basePrice").description("base price of new Event"),
+                                fieldWithPath("maxPrice").description("max price of new Event"),
+                                fieldWithPath("limitOfEnrollment").description("limit of enrollment of new Event"),
+                                fieldWithPath("free").description("it tells is this event is free or not"),
+                                fieldWithPath("offline").description("it tells is this event is offline or not"),
+                                fieldWithPath("eventStatus").description("event status"),
+                                fieldWithPath("eventStatus").description("event status")
+                        )
+
+                ))
         ;
     }
 
