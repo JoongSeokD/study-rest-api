@@ -1,4 +1,4 @@
-package me.ljseokd.studyrestapi.events.common;
+package me.ljseokd.studyrestapi.common;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
