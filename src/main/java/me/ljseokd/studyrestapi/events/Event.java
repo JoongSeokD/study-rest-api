@@ -30,4 +30,19 @@ public class Event {
     @Enumerated(STRING)
     private EventStatus eventStatus = EventStatus.DRAFT;
 
+    public void update() {
+        //Update Free
+        if (basePrice == 0 && maxPrice == 0){
+            free = true;
+        }else {
+            free = false;
+        }
+
+        //Update offline JAVA11 Version isBlank()
+        if (location == null || location.isBlank()){
+            offline = false;
+        }else {
+            offline = true;
+        }
+    }
 }
