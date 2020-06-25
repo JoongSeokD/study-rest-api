@@ -77,6 +77,7 @@ public class EventController {
         eventResource.add(new Link("/docs/index.html#resources-events-get").withRel("profile"));
         return ResponseEntity.ok(eventResource);
 
+
     }
     @PutMapping("/{id}")
     public ResponseEntity updateEvent(@PathVariable Long id, @RequestBody @Valid EventDto eventDto, Errors errors){
