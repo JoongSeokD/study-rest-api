@@ -1,11 +1,13 @@
 package me.ljseokd.studyrestapi.events;
 
 import lombok.*;
+import me.ljseokd.studyrestapi.accounts.Account;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 import static javax.persistence.EnumType.*;
+import static javax.persistence.FetchType.*;
 
 @Builder @NoArgsConstructor @AllArgsConstructor
 @Getter @Setter @EqualsAndHashCode(of = "id")
@@ -26,6 +28,9 @@ public class Event {
     private int limitOfEnrollment;
     private boolean offline;
     private boolean free;
+
+    @ManyToOne(fetch = LAZY)
+    private Account manager;
 
     @Enumerated(STRING)
     private EventStatus eventStatus = EventStatus.DRAFT;
