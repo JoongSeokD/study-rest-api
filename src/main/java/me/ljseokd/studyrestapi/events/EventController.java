@@ -1,6 +1,7 @@
 package me.ljseokd.studyrestapi.events;
 
 import lombok.RequiredArgsConstructor;
+import me.ljseokd.studyrestapi.common.ErrorsResource;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -30,11 +31,11 @@ public class EventController {
     @PostMapping
     public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors){
         if (errors.hasErrors()){
-            return ResponseEntity.badRequest().body(errors);
+            return badRequest(errors);
         }
         eventValidator.validate(eventDto,errors);
         if (errors.hasErrors()){
-            return ResponseEntity.badRequest().body(errors);
+            return badRequest(errors);
         }
         Event event = modelMapper.map(eventDto, Event.class);
         event.update();
@@ -47,6 +48,10 @@ public class EventController {
         eventResource.add(selfLinkBuilder.withRel("update-event"));
 
         return ResponseEntity.created(uri).body(eventResource);
+    }
+
+    private ResponseEntity badRequest(Errors errors) {
+        return ResponseEntity.badRequest().body(new ErrorsResource(errors));
     }
 
 }

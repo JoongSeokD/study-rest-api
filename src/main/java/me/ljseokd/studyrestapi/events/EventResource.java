@@ -1,26 +1,14 @@
 package me.ljseokd.studyrestapi.events;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
-public class EventResource extends RepresentationModel {
+public class EventResource extends EntityModel<Event> {
 
-    @JsonUnwrapped
-    private Event event;
 
-    public EventResource(Event event) {
-        this.event = event;
+    public EventResource(Event event, Link... links) {
+        super(event, links);
         add(WebMvcLinkBuilder.linkTo(EventController.class).slash(event.getId()).withSelfRel());
     }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
-    }
-
-
 }
