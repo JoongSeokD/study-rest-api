@@ -12,9 +12,4 @@ public class StudyRestApiApplication {
         SpringApplication.run(StudyRestApiApplication.class, args);
     }
 
-    @Bean
-    ModelMapper modelMapper(){
-        return new ModelMapper();
-    }
-
 }
