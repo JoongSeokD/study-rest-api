@@ -77,7 +77,31 @@ public class EventController {
         eventResource.add(new Link("/docs/index.html#resources-events-get").withRel("profile"));
         return ResponseEntity.ok(eventResource);
 
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity updateEvent(@PathVariable Long id, @RequestBody @Valid EventDto eventDto, Errors errors){
+        Optional<Event> optionalEvent = eventRepository.findById(id);
+        if (optionalEvent.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        if (errors.hasErrors()){
+            return badRequest(errors);
+        }
+        eventValidator.validate(eventDto,errors);
+        if (errors.hasErrors()){
+            return badRequest(errors);
+        }
 
+        Event existingEvent = optionalEvent.get();
+        modelMapper.map(eventDto, existingEvent); // 서비스를 만들지 않고 트랜잭션이 없기때문에 변경감지가 일어나지 않는다. (save를 해줘야함)
+        Event savedEvent = eventRepository.save(existingEvent);
+
+        EventResource eventResource = new EventResource(savedEvent);
+
+        eventResource.add(new Link("/docs/index.html#resources-events-update").withRel("profile"));
+
+
+        return ResponseEntity.ok(eventResource);
 
     }
 
